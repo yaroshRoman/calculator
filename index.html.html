@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор механической поддержки кровообращения</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .frame {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .frame-title {
+            font-weight: bold;
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-group label {
+            width: 200px;
+            margin-right: 10px;
+            text-align: right;
+        }
+        
+        .form-group input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .radio-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-option {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .result {
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #e8f4fc;
+            text-align: center;
+        }
+        
+        .warning {
+            color: #e74c3c;
+        }
+        
+        .recommendations {
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-left: 4px solid #3498db;
+        }
+        
+        @media (max-width: 600px) {
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .form-group label {
+                width: auto;
+                text-align: left;
+                margin-bottom: 5px;
+            }
+            
+            .form-group input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор механической поддержки кровообращения</h1>
+    
+    <div class="frame">
+        <h2 class="frame-title">Введите дозы препаратов (мкг/кг/мин)</h2>
+        
+        <div class="form-group">
+            <label for="dopamine">Допамин:</label>
+            <input type="text" id="dopamine" value="0" class="drug-input">
+        </div>
+        
+        <div class="form-group">
+            <label for="dobutamine">Добутамин:</label>
+            <input type="text" id="dobutamine" value="0" class="drug-input">
+        </div>
+        
+        <div class="form-group">
+            <label for="epinephrine">Эпинефрин:</label>
+            <input type="text" id="epinephrine" value="0" class="drug-input">
+        </div>
+        
+        <div class="form-group">
+            <label for="milrinone">Милринон:</label>
+            <input type="text" id="milrinone" value="0" class="drug-input">
+        </div>
+        
+        <div class="form-group">
+            <label for="norepinephrine">Норэпинефрин:</label>
+            <input type="text" id="norepinephrine" value="0" class="drug-input">
+        </div>
+        
+        <div class="form-group">
+            <label for="vasopressin">Вазопрессин:</label>
+            <input type="text" id="vasopressin" value="0" class="drug-input">
+        </div>
+        
+        <div class="form-group">
+            <label for="levosimendan">Левосимендан:</label>
+            <input type="text" id="levosimendan" value="0" class="drug-input">
+        </div>
+        
+        <button id="calculate-vip">Рассчитать ВИП</button>
+        
+        <div id="vip-result" class="result"></div>
+    </div>
+    
+    <div class="frame">
+        <h2 class="frame-title">Дополнительные параметры</h2>
+        
+        <div class="form-group">
+            <label for="laktat">Лактат (ммоль/л):</label>
+            <input type="text" id="laktat">
+        </div>
+        
+        <div class="form-group">
+            <label for="spO2">SpO₂ (%):</label>
+            <input type="text" id="spO2">
+        </div>
+        
+        <div class="form-group">
+            <label for="vik">ВИК:</label>
+            <input type="text" id="vik">
+        </div>
+        
+        <div class="form-group">
+            <label>Отек легких:</label>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="edema-no" name="edema" value="0" checked>
+                    <label for="edema-no" style="width: auto;">Нет</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="edema-yes" name="edema" value="1">
+                    <label for="edema-yes" style="width: auto;">Да</label>
+                </div>
+            </div>
+        </div>
+        
+        <button id="calculate-p">Рассчитать необходимую МПК</button>
+        
+        <div id="p-result" class="result"></div>
+        <div id="vabk-result" class="result"></div>
+    </div>
+    
+    <div class="frame">
+        <h2 class="frame-title">Рекомендации</h2>
+        <div id="recommendations" class="recommendations"></div>
+    </div>
+
+    <script>
+        // Функция для замены запятых на точки
+        function replaceCommaWithDot(text) {
+            return text ? text.replace(',', '.') : text;
+        }
+        
+        // Функция для расчета ВИП
+        function calculateVIP() {
+            try {
+                // Получаем значения с заменой запятых на точки
+                const dopamine = parseFloat(replaceCommaWithDot(document.getElementById('dopamine').value) || 0);
+                const dobutamine = parseFloat(replaceCommaWithDot(document.getElementById('dobutamine').value) || 0);
+                const epinephrine = parseFloat(replaceCommaWithDot(document.getElementById('epinephrine').value) || 0);
+                const milrinone = parseFloat(replaceCommaWithDot(document.getElementById('milrinone').value) || 0);
+                const norepinephrine = parseFloat(replaceCommaWithDot(document.getElementById('norepinephrine').value) || 0);
+                const vasopressin = parseFloat(replaceCommaWithDot(document.getElementById('vasopressin').value) || 0);
+                const levosimendan = parseFloat(replaceCommaWithDot(document.getElementById('levosimendan').value) || 0);
+
+                const VIP = (
+                    dopamine + 
+                    dobutamine + 
+                    100 * epinephrine + 
+                    10 * milrinone + 
+                    100 * norepinephrine + 
+                    30000 * vasopressin + 
+                    50 * levosimendan
+                );
+                
+                document.getElementById('vip-result').textContent = `ВИП = ${VIP.toFixed(2)} баллов`;
+                return VIP;
+            } catch (error) {
+                alert("Пожалуйста, введите корректные числа (используйте точку или запятую как разделитель)!");
+                return null;
+            }
+        }
+        
+        // Функция для расчета P
+        function calculateP() {
+            try {
+                const VIP = calculateVIP();
+                if (VIP === null) return;
+
+                // Получаем значения с заменой запятых на точки
+                const laktat = parseFloat(replaceCommaWithDot(document.getElementById('laktat').value));
+                const spO2 = parseFloat(replaceCommaWithDot(document.getElementById('spO2').value));
+                const VIK = parseFloat(replaceCommaWithDot(document.getElementById('vik').value));
+                const edema = parseInt(document.querySelector('input[name="edema"]:checked').value);
+
+                // Расчет P (с учетом отека легких)
+                let Z;
+                if (edema === 1) {  // Если отек легких есть
+                    Z = 0.329 * laktat + 0.201 * VIK * VIP / 1000 + 0.344 * edema * (100 - spO2) - 3.741;
+                } else {  // Если отека легких нет
+                    Z = 0.339 * laktat + 0.270 * (100 - spO2) + 0.231 * VIP * VIK / 1000 - 4.446;
+                }
+                
+                const P = 1 / (1 + Math.exp(-Z)) * 100;
+                document.getElementById('p-result').textContent = `Вероятность подключения ЭКМО = ${P.toFixed(2)}%`;
+                
+                // Расчет вероятности летального исхода на ВАБК (с учетом отека легких)
+                let Z_vabk;
+                if (edema === 1) {  // Если отек легких есть
+                    Z_vabk = 0.052 * VIP + 0.217 * laktat + 0.283 * edema * (100 - spO2) - 4.289;
+                } else {  // Если отека легких нет
+                    Z_vabk = 0.17 * laktat + 0.048 * VIP - 3.664;
+                }
+                
+                const P_vabk = 1 / (1 + Math.exp(-Z_vabk)) * 100;
+                
+                const vabkResult = document.getElementById('vabk-result');
+                vabkResult.textContent = `Вероятность летального исхода при подключении ВАБК = ${P_vabk.toFixed(2)}%`;
+                
+                // Устанавливаем цвет текста в зависимости от значения
+                if (P_vabk > 23) {
+                    vabkResult.classList.add('warning');
+                } else {
+                    vabkResult.classList.remove('warning');
+                }
+                
+                // Формирование рекомендаций
+                const recommendations = [];
+                if (P > 48) {
+                    recommendations.push("Высокая вероятность необходимости ЭКМО - рекомендуется рассмотреть возможность подключения");
+                }
+                
+                if (P_vabk > 23) {
+                    recommendations.push("Высокий риск летального исхода при ВАБК - требуется особая осторожность");
+                } else {
+                    recommendations.push("Рекомендовано подключение ВАБК с низким риском неблагоприятных исходов");
+                }
+                
+                document.getElementById('recommendations').innerHTML = recommendations.join('<br>');
+                
+            } catch (error) {
+                alert("Пожалуйста, введите корректные числа для всех дополнительных параметров (используйте точку или запятую как разделитель)!");
+            }
+        }
+        
+        // Обработчики событий
+        document.getElementById('calculate-vip').addEventListener('click', calculateVIP);
+        document.getElementById('calculate-p').addEventListener('click', calculateP);
+        
+        // Очистка поля ввода при клике, если значение "0"
+        document.querySelectorAll('.drug-input').forEach(input => {
+            input.addEventListener('click', function() {
+                if (this.value === '0') {
+                    this.value = '';
+                }
+            });
+        });
+        
+        // Переход к следующему полю при нажатии Enter
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const inputs = Array.from(document.querySelectorAll('input'));
+                    const currentIndex = inputs.indexOf(this);
+                    if (currentIndex < inputs.length - 1) {
+                        inputs[currentIndex + 1].focus();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
